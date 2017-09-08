@@ -16,13 +16,13 @@ public class HexGrid : MonoBehaviour {
     HexCell[] cells;
     HexGridChunk[] chunks;
 
-	Canvas gridCanvas;
-	HexMesh hexMesh;
+	//Canvas gridCanvas;
+	//HexMesh hexMesh;
 
 	void Awake ()
     {
-        gridCanvas = GetComponentInChildren<Canvas>();
-        hexMesh = GetComponentInChildren<HexMesh>();
+        //gridCanvas = GetComponentInChildren<Canvas>();
+        //hexMesh = GetComponentInChildren<HexMesh>();
         
         cellCountX = chunkCountX * HexMetrics.chunkSizeX;
         cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
@@ -58,17 +58,17 @@ public class HexGrid : MonoBehaviour {
         }
     }
 
-    void Start () {
-		hexMesh.Triangulate(cells);
-	}
+    //void Start () {
+		//hexMesh.Triangulate(cells);
+	//}
 
 	public void ColorCell (Vector3 position, Color color) {
 		position = transform.InverseTransformPoint(position);
 		HexCoordinates coordinates = HexCoordinates.FromPosition(position);
 		int index = coordinates.X + coordinates.Z * cellCountX + coordinates.Z / 2;
 		HexCell cell = cells[index];
-		cell.color = color;
-		hexMesh.Triangulate(cells);
+		cell.Color = color;
+		//hexMesh.Triangulate(cells);
 	}
 
 	void CreateCell (int x, int z, int i) {
@@ -81,7 +81,7 @@ public class HexGrid : MonoBehaviour {
 		//cell.transform.SetParent(transform, false);
 		cell.transform.localPosition = position;
 		cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
-		cell.color = defaultColor;
+		cell.Color = defaultColor;
 
 		if (x > 0) {
 			cell.SetNeighbor(HexDirection.W, cells[i - 1]);
@@ -106,6 +106,7 @@ public class HexGrid : MonoBehaviour {
 		label.rectTransform.anchoredPosition =
 			new Vector2(position.x, position.z);
 		label.text = cell.coordinates.ToStringOnSeparateLines();
+        cell.uiRect = label.rectTransform;
 
         AddCellToChunk(x, z, cell);
     }
