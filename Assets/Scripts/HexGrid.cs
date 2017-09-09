@@ -52,15 +52,22 @@ public class HexGrid : MonoBehaviour {
         }
     }
 
-	public void ColorCell (Vector3 position, Color color) {
-		position = transform.InverseTransformPoint(position);
-		HexCoordinates coordinates = HexCoordinates.FromPosition(position);
-		int index = coordinates.X + coordinates.Z * cellCountX + coordinates.Z / 2;
-		HexCell cell = cells[index];
-		cell.Color = color;
-	}
+    public HexCell GetCell(Vector3 position)
+    {
+        position = transform.InverseTransformPoint(position);
+        HexCoordinates coordinates = HexCoordinates.FromPosition(position);
+        int index = coordinates.X + coordinates.Z * cellCountX + coordinates.Z / 2;
+        return cells[index];
+    }
 
-	void CreateCell (int x, int z, int i) {
+    public HexCell GetCell(HexCoordinates coordinates)
+    {
+        int z = coordinates.Z;
+        int x = coordinates.X + z / 2;
+        return cells[x + z * cellCountX];
+    }
+
+    void CreateCell (int x, int z, int i) {
 		Vector3 position;
 		position.x = (x + z * 0.5f - z / 2) * (HexMetrics.innerRadius * 2f);
 		position.y = 0f;
@@ -114,6 +121,14 @@ public class HexGrid : MonoBehaviour {
         for (int i = 0; i < chunks.Length; i++)
         {
             chunks[i].ShowUI(visible);
+        }
+    }
+
+    public void FindDistancesTo(HexCell cell)
+    {
+        for (int i = 0; i < cells.Length; i++)
+        {
+            cells[i].Distance = 0;
         }
     }
 }

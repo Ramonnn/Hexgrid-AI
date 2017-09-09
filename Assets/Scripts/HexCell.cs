@@ -1,10 +1,23 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class HexCell : MonoBehaviour {
 
 	public HexCoordinates coordinates;
-
     public RectTransform uiRect;
+    public int Distance
+    {
+        get
+        {
+            return distance;
+        }
+        set
+        {
+            distance = value;
+            UpdateDistanceLabel();
+        }
+    }
+    int distance;
 
     public Color Color
     {
@@ -46,5 +59,9 @@ public class HexCell : MonoBehaviour {
             chunk.Refresh();
         }
     }
-
+    void UpdateDistanceLabel()
+    {
+        Text label = uiRect.GetComponent<Text>();
+        label.text = distance.ToString();
+    }
 }
