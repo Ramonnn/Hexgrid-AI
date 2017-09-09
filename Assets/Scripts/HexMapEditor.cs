@@ -33,4 +33,9 @@ public class HexMapEditor : MonoBehaviour {
 	public void SelectColor (int index) {
 		activeColor = colors[index];
 	}
+
+    public void ShowUI(bool visible)
+    {
+        hexGrid.ShowUI(visible);
+    }
 }

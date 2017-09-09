@@ -16,14 +16,8 @@ public class HexGrid : MonoBehaviour {
     HexCell[] cells;
     HexGridChunk[] chunks;
 
-	//Canvas gridCanvas;
-	//HexMesh hexMesh;
-
 	void Awake ()
     {
-        //gridCanvas = GetComponentInChildren<Canvas>();
-        //hexMesh = GetComponentInChildren<HexMesh>();
-        
         cellCountX = chunkCountX * HexMetrics.chunkSizeX;
         cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
 
@@ -58,17 +52,12 @@ public class HexGrid : MonoBehaviour {
         }
     }
 
-    //void Start () {
-		//hexMesh.Triangulate(cells);
-	//}
-
 	public void ColorCell (Vector3 position, Color color) {
 		position = transform.InverseTransformPoint(position);
 		HexCoordinates coordinates = HexCoordinates.FromPosition(position);
 		int index = coordinates.X + coordinates.Z * cellCountX + coordinates.Z / 2;
 		HexCell cell = cells[index];
 		cell.Color = color;
-		//hexMesh.Triangulate(cells);
 	}
 
 	void CreateCell (int x, int z, int i) {
@@ -78,7 +67,6 @@ public class HexGrid : MonoBehaviour {
 		position.z = z * (HexMetrics.outerRadius * 1.5f);
 
 		HexCell cell = cells[i] = Instantiate<HexCell>(cellPrefab);
-		//cell.transform.SetParent(transform, false);
 		cell.transform.localPosition = position;
 		cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
 		cell.Color = defaultColor;
@@ -102,7 +90,6 @@ public class HexGrid : MonoBehaviour {
 		}
 
 		Text label = Instantiate<Text>(cellLabelPrefab);
-		//label.rectTransform.SetParent(gridCanvas.transform, false);
 		label.rectTransform.anchoredPosition =
 			new Vector2(position.x, position.z);
 		label.text = cell.coordinates.ToStringOnSeparateLines();
@@ -120,5 +107,13 @@ public class HexGrid : MonoBehaviour {
         int localX = x - chunkX * HexMetrics.chunkSizeX;
         int localZ = z - chunkZ * HexMetrics.chunkSizeZ;
         chunk.AddCell(localX + localZ * HexMetrics.chunkSizeX, cell);
+    }
+
+    public void ShowUI(bool visible)
+    {
+        for (int i = 0; i < chunks.Length; i++)
+        {
+            chunks[i].ShowUI(visible);
+        }
     }
 }
