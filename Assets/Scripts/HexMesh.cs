@@ -18,41 +18,7 @@ public class HexMesh : MonoBehaviour {
 		hexMesh.name = "Hex Mesh";
 	}
 
-	public void Triangulate (HexCell[] cells) {
-		hexMesh.Clear();
-		vertices.Clear();
-		colors.Clear();
-		triangles.Clear();
-		for (int i = 0; i < cells.Length; i++) {
-			Triangulate(cells[i]);
-		}
-		hexMesh.vertices = vertices.ToArray();
-		hexMesh.colors = colors.ToArray();
-		hexMesh.triangles = triangles.ToArray();
-		hexMesh.RecalculateNormals();
-		meshCollider.sharedMesh = hexMesh;
-	}
-
-	void Triangulate (HexCell cell) {
-		for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++) {
-			Triangulate(d, cell);
-		}
-	}
-
-	void Triangulate (HexDirection direction, HexCell cell) {
-		Vector3 center = cell.transform.localPosition;
-		AddTriangle(
-			center,
-			center + HexMetrics.GetFirstCorner(direction),
-			center + HexMetrics.GetSecondCorner(direction)
-		);
-		HexCell prevNeighbor = cell.GetNeighbor(direction.Previous()) ?? cell;
-		HexCell neighbor = cell.GetNeighbor(direction) ?? cell;
-		HexCell nextNeighbor = cell.GetNeighbor(direction.Next()) ?? cell;
-        AddTriangleColor(cell.Color);
-	}
-
-	void AddTriangle (Vector3 v1, Vector3 v2, Vector3 v3) {
+	public void AddTriangle (Vector3 v1, Vector3 v2, Vector3 v3) {
 		int vertexIndex = vertices.Count;
 		vertices.Add(v1);
 		vertices.Add(v2);
@@ -62,9 +28,26 @@ public class HexMesh : MonoBehaviour {
 		triangles.Add(vertexIndex + 2);
 	}
 
-	void AddTriangleColor (Color color) {
+	public void AddTriangleColor (Color color) {
 		colors.Add(color);
 		colors.Add(color);
 		colors.Add(color);
 	}
+
+    public void Clear()
+    {
+        hexMesh.Clear();
+        vertices.Clear();
+        colors.Clear();
+        triangles.Clear();
+    }
+
+    public void Apply()
+    {
+        hexMesh.SetVertices(vertices);
+        hexMesh.SetColors(colors);
+        hexMesh.SetTriangles(triangles, 0);
+        hexMesh.RecalculateNormals();
+        meshCollider.sharedMesh = hexMesh;
+    }
 }

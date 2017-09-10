@@ -6,22 +6,56 @@ using UnityEngine.UI;
 public class HexGridChunk : MonoBehaviour
 {
     HexCell[] cells;
+    public HexMesh terrain;
 
-    HexMesh hexMesh;
+    //HexMesh hexMesh;
     Canvas gridCanvas;
 
     void Awake()
     {
         gridCanvas = GetComponentInChildren<Canvas>();
-        hexMesh = GetComponentInChildren<HexMesh>();
+        //hexMesh = GetComponentInChildren<HexMesh>();
 
         cells = new HexCell[HexMetrics.chunkSizeX * HexMetrics.chunkSizeZ];
         ShowUI(false);
     }
 
-    void Start()
+    void LateUpdate()
     {
-        hexMesh.Triangulate(cells);
+        Triangulate();
+        enabled = false;
+    }
+
+    public void Triangulate()
+    {
+        terrain.Clear();
+        for (int i = 0; i < cells.Length; i++)
+        {
+            Triangulate(cells[i]);
+        }
+        terrain.Apply();
+    }
+
+    void Triangulate(HexCell cell)
+    {
+        for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+        {
+            Triangulate(d, cell);
+        }
+    }
+
+    void Triangulate(HexDirection direction, HexCell cell)
+    {
+        Vector3 center = cell.transform.localPosition;
+        terrain.AddTriangle(
+            center,
+            center + HexMetrics.GetFirstCorner(direction),
+            center + HexMetrics.GetSecondCorner(direction)
+        );
+        HexCell prevNeighbor = cell.GetNeighbor(direction.Previous()) ?? cell;
+        HexCell neighbor = cell.GetNeighbor(direction) ?? cell;
+        HexCell nextNeighbor = cell.GetNeighbor(direction.Next()) ?? cell;
+        terrain.AddTriangleColor(cell.Color);
     }
 
     public void AddCell(int index, HexCell cell)
@@ -34,7 +68,7 @@ public class HexGridChunk : MonoBehaviour
 
     public void Refresh()
     {
-        hexMesh.Triangulate(cells);
+        enabled = true;
     }
 
     public void ShowUI(bool visible)
