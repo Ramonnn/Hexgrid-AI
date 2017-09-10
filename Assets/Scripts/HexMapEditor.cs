@@ -28,8 +28,8 @@ public class HexMapEditor : MonoBehaviour {
 		RaycastHit hit;
 		if (Physics.Raycast(inputRay, out hit)) {
             EditCell(hexGrid.GetCell(hit.point));
-            //HexCell currentCell = hexGrid.GetCell(hit.point);
-            //hexGrid.FindDistancesTo(currentCell);
+            HexCell currentCell = hexGrid.GetCell(hit.point);
+            hexGrid.FindDistancesTo(currentCell);
         }
     }
 
