@@ -8,13 +8,11 @@ public class HexGridChunk : MonoBehaviour
     HexCell[] cells;
     public HexMesh terrain;
 
-    //HexMesh hexMesh;
     Canvas gridCanvas;
 
     void Awake()
     {
         gridCanvas = GetComponentInChildren<Canvas>();
-        //hexMesh = GetComponentInChildren<HexMesh>();
 
         cells = new HexCell[HexMetrics.chunkSizeX * HexMetrics.chunkSizeZ];
         ShowUI(false);
