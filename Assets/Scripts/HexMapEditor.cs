@@ -6,7 +6,7 @@ public class HexMapEditor : MonoBehaviour {
 	public Color[] colors;
 
     public HexGrid hexGrid;
-    HexCell searchFromCell;
+    HexCell searchFromCell, searchToCell;
 
 
 	private Color activeColor;
@@ -31,7 +31,7 @@ public class HexMapEditor : MonoBehaviour {
 		if (Physics.Raycast(inputRay, out hit)) {
             EditCell(hexGrid.GetCell(hit.point));
             HexCell currentCell = hexGrid.GetCell(hit.point);
-            if (Input.GetKey(KeyCode.LeftShift))
+            if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
             {
                 if (searchFromCell)
                 {
@@ -39,10 +39,15 @@ public class HexMapEditor : MonoBehaviour {
                 }
                 searchFromCell = currentCell;
                 searchFromCell.EnableHighlight(Color.blue);
+                if (searchToCell)
+                {
+                    hexGrid.FindPath(searchFromCell, searchToCell);
+                }
             }
             if (searchFromCell && searchFromCell != currentCell)
             {
-                hexGrid.FindPath(searchFromCell, currentCell);
+                searchToCell = currentCell;
+                hexGrid.FindPath(searchFromCell, searchToCell);
             }
         }
     }
