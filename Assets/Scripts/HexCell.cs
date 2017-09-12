@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 
 public class HexCell : MonoBehaviour {
 
@@ -100,5 +101,15 @@ public class HexCell : MonoBehaviour {
         {
             return distance + SearchHeuristic;
         }
+    }
+
+    public void Save(BinaryWriter writer)
+    {
+        writer.Write((byte)terrainTypeIndex);
+    }
+
+    public void Load(BinaryReader reader)
+    {
+        terrainTypeIndex = reader.ReadByte();
     }
 }
