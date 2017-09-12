@@ -27,22 +27,13 @@ public class HexCell : MonoBehaviour {
     {
         get
         {
-            return color;
-        }
-        set
-        {
-            if (color == value)
-            {
-                return;
-            }
-            color = value;
-            Refresh();
+            return HexMetrics.colors[terrainTypeIndex];
         }
     }
 
     public HexGridChunk chunk;
 
-    Color color;
+    int terrainTypeIndex;
 
     [SerializeField]
 	HexCell[] neighbors;
@@ -85,6 +76,22 @@ public class HexCell : MonoBehaviour {
         Image highlight = uiRect.GetChild(0).GetComponent<Image>();
         highlight.color = color;
         highlight.enabled = true;
+    }
+
+    public int TerrainTypeIndex
+    {
+        get
+        {
+            return terrainTypeIndex;
+        }
+        set
+        {
+            if (terrainTypeIndex != value)
+            {
+                terrainTypeIndex = value;
+                Refresh();
+            }
+        }
     }
 
     public int SearchPriority

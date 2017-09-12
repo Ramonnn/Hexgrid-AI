@@ -3,20 +3,12 @@ using UnityEngine.EventSystems;
 
 public class HexMapEditor : MonoBehaviour {
 
-	public Color[] colors;
-
     public HexGrid hexGrid;
     HexCell searchFromCell, searchToCell;
 
+    int activeTerrainTypeIndex;
 
-	private Color activeColor;
-    bool applyColor;
-
-    void Awake () {
-		SelectColor(0);
-	}
-
-	void Update () {
+    void Update () {
 		if (
 			Input.GetMouseButton(0) &&
 			!EventSystem.current.IsPointerOverGameObject()
@@ -54,22 +46,23 @@ public class HexMapEditor : MonoBehaviour {
 
     void EditCell(HexCell cell)
     {
-        if (applyColor)
+        if (cell)
         {
-            cell.Color = activeColor;
+            if (activeTerrainTypeIndex >= 0)
+            {
+                cell.TerrainTypeIndex = activeTerrainTypeIndex;
+            }
         }
-    }
 
-    public void SelectColor (int index) {
-        applyColor = index >= 0;
-        if (applyColor)
-        {
-            activeColor = colors[index];
-        }
-	}
+    }
 
     public void ShowUI(bool visible)
     {
         hexGrid.ShowUI(visible);
+    }
+
+    public void SetTerrainTypeIndex(int index)
+    {
+        activeTerrainTypeIndex = index;
     }
 }

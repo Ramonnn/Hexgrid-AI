@@ -9,9 +9,9 @@ public class HexGrid : MonoBehaviour {
 
     public int chunkCountX = 4, chunkCountZ = 3;
 
-    public Color defaultColor = Color.white;
+    public Color[] colors;
 
-	public HexCell cellPrefab;
+    public HexCell cellPrefab;
 	public Text cellLabelPrefab;
     public HexGridChunk chunkPrefab;
 
@@ -22,6 +22,8 @@ public class HexGrid : MonoBehaviour {
 
     void Awake ()
     {
+        HexMetrics.colors = colors;
+
         cellCountX = chunkCountX * HexMetrics.chunkSizeX;
         cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
 
@@ -80,7 +82,6 @@ public class HexGrid : MonoBehaviour {
 		HexCell cell = cells[i] = Instantiate<HexCell>(cellPrefab);
 		cell.transform.localPosition = position;
 		cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
-		cell.Color = defaultColor;
 
 		if (x > 0) {
 			cell.SetNeighbor(HexDirection.W, cells[i - 1]);
@@ -181,7 +182,6 @@ public class HexGrid : MonoBehaviour {
                     continue;
                 }
                 int moveCost = 1;
-                Color[] colors = FindObjectOfType<HexMapEditor>().colors;
                 if (neighbor.Color == colors[1]) //TERRAIN COST OF GREEN TERRAIN ADDED.
                 {
                     moveCost = 2;
