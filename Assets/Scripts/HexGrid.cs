@@ -147,6 +147,7 @@ public class HexGrid : MonoBehaviour {
         for (int i = 0; i < cells.Length; i++)
         {
             cells[i].Distance = int.MaxValue;
+            cells[i].SetLabel(null);
             cells[i].DisableHighlight();
         }
         fromCell.EnableHighlight(Color.blue);
@@ -199,6 +200,7 @@ public class HexGrid : MonoBehaviour {
                 if (neighbor.Distance == int.MaxValue)
                 {
                     neighbor.Distance = distance;
+                    neighbor.SetLabel(turn.ToString());
                     neighbor.PathFrom = current;
                     neighbor.SearchHeuristic = neighbor.coordinates.DistanceTo(toCell.coordinates);
                     searchFrontier.Enqueue(neighbor);
@@ -207,6 +209,7 @@ public class HexGrid : MonoBehaviour {
                 {
                     int oldPriority = neighbor.SearchPriority;
                     neighbor.Distance = distance;
+                    neighbor.SetLabel(turn.ToString());
                     neighbor.PathFrom = current;
                     searchFrontier.Change(neighbor, oldPriority);
                 }

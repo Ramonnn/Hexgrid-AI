@@ -18,7 +18,7 @@ public class HexCell : MonoBehaviour {
         set
         {
             distance = value;
-            UpdateDistanceLabel();
+            //UpdateDistanceLabel();
         }
     }
     int distance;
@@ -63,10 +63,15 @@ public class HexCell : MonoBehaviour {
             chunk.Refresh();
         }
     }
-    void UpdateDistanceLabel()
+    //void UpdateDistanceLabel()
+    //{
+    //  Text label = uiRect.GetComponent<Text>();
+    //label.text = distance == int.MaxValue ? "" : distance.ToString();
+    //}
+    public void SetLabel(string text)
     {
-        Text label = uiRect.GetComponent<Text>();
-        label.text = distance == int.MaxValue ? "" : distance.ToString();
+        UnityEngine.UI.Text label = uiRect.GetComponent<Text>();
+        label.text = text;
     }
 
     public void DisableHighlight()
