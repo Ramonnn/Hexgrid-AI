@@ -128,13 +128,13 @@ public class HexGrid : MonoBehaviour {
         }
     }
 
-    public void FindPath(HexCell fromCell, HexCell toCell)
+    public void FindPath(HexCell fromCell, HexCell toCell, int speed)
     {
         StopAllCoroutines();
-        StartCoroutine(Search(fromCell, toCell));
+        StartCoroutine(Search(fromCell, toCell, speed));
     }
 
-    IEnumerator Search(HexCell fromCell, HexCell toCell)
+    IEnumerator Search(HexCell fromCell, HexCell toCell, int speed)
     {
         if (searchFrontier == null)
         {
@@ -152,15 +152,12 @@ public class HexGrid : MonoBehaviour {
         fromCell.EnableHighlight(Color.blue);
         toCell.EnableHighlight(Color.red);
         WaitForSeconds delay = new WaitForSeconds(1 / 60f);
-        //List<HexCell> frontier = new List<HexCell>();
         fromCell.Distance = 0;
-        //frontier.Add(fromCell);
         searchFrontier.Enqueue(fromCell);
         while (searchFrontier.Count > 0)
         {
             yield return delay;
             HexCell current = searchFrontier.Dequeue();
-            //frontier.RemoveAt(0);
 
             if (current == toCell)
             {
@@ -173,6 +170,8 @@ public class HexGrid : MonoBehaviour {
                 break;
             }
 
+            int currentTurn = current.Distance / speed;
+
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             {
                 HexCell neighbor = current.GetNeighbor(d);
@@ -180,14 +179,28 @@ public class HexGrid : MonoBehaviour {
                 {
                     continue;
                 }
-                int distance = current.Distance;
-                distance += 1;
+                int moveCost = 1;
+                Color[] colors = FindObjectOfType<HexMapEditor>().colors;
+                if (neighbor.Color == colors[1]) //TERRAIN COST OF GREEN TERRAIN ADDED.
+                {
+                    moveCost = 2;
+                }
+                if (neighbor.Color == colors[2]) //TERRAIN COST OF BLUE TERRAIN ADDED.
+                {
+                    moveCost = 5;
+                }
+                int distance = current.Distance + moveCost;
+                distance += 2; //DEFAULT MOVEMENT SPEED IS NOW 5.
+                int turn = distance / speed;
+                if (turn > currentTurn)
+                {
+                    distance = turn * speed + moveCost;
+                }
                 if (neighbor.Distance == int.MaxValue)
                 {
                     neighbor.Distance = distance;
                     neighbor.PathFrom = current;
                     neighbor.SearchHeuristic = neighbor.coordinates.DistanceTo(toCell.coordinates);
-                    //frontier.Add(neighbor);
                     searchFrontier.Enqueue(neighbor);
                 }
                 else if (distance < neighbor.Distance)
@@ -197,7 +210,6 @@ public class HexGrid : MonoBehaviour {
                     neighbor.PathFrom = current;
                     searchFrontier.Change(neighbor, oldPriority);
                 }
-                //frontier.Sort((x, y) => x.SearchPriority.CompareTo(y.SearchPriority));
             }
         }
     }
