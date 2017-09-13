@@ -1,7 +1,8 @@
-﻿Shader "Custom/VertexColors" {
+﻿Shader "Custom/Terrain" {
 	Properties {
 		_Color ("Color", Color) = (1,1,1,1)
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
+		_GridTex ("Grid Texture", 2D) = "white" {}
 		_Glossiness ("Smoothness", Range(0,1)) = 0.5
 		_Metallic ("Metallic", Range(0,1)) = 0.0
 	}
@@ -14,19 +15,26 @@
 		#pragma target 3.0
 
 		sampler2D _MainTex;
-
-		struct Input {
-			float2 uv_MainTex;
-			float4 color : COLOR;
-		};
+		sampler2D _GridTex;
 
 		half _Glossiness;
 		half _Metallic;
 		fixed4 _Color;
 
+		struct Input {
+			float2 uv_MainTex;
+			float4 color : COLOR;
+			float3 worldPos;
+		};
+
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
-			o.Albedo = c.rgb * IN.color;
+			float2 gridUV = IN.worldPos.xz;
+			gridUV.x *= 1 / (4 * 8.66025404);
+			gridUV.y *= 1 / (2 * 15.0);
+			fixed4 grid = tex2D(_GridTex, gridUV);
+
+			o.Albedo = c.rgb * IN.color * grid;
 			o.Metallic = _Metallic;
 			o.Smoothness = _Glossiness;
 			o.Alpha = c.a;
