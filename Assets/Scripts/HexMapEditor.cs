@@ -6,6 +6,7 @@ public class HexMapEditor : MonoBehaviour {
 
     public HexGrid hexGrid;
     HexCell searchFromCell, searchToCell;
+    bool editMode;
 
     int activeTerrainTypeIndex;
 
@@ -22,7 +23,10 @@ public class HexMapEditor : MonoBehaviour {
 		Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit;
 		if (Physics.Raycast(inputRay, out hit)) {
-            EditCell(hexGrid.GetCell(hit.point));
+            if (editMode)
+            {
+                EditCell(hexGrid.GetCell(hit.point));
+            }
             HexCell currentCell = hexGrid.GetCell(hit.point);
             if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
             {
@@ -61,6 +65,12 @@ public class HexMapEditor : MonoBehaviour {
             }
         }
 
+    }
+
+    public void SetEditMode(bool toggle)
+    {
+        editMode = toggle;
+        hexGrid.ShowUI(!toggle);
     }
 
     public void ShowUI(bool visible)
