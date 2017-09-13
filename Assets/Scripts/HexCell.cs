@@ -8,6 +8,7 @@ public class HexCell : MonoBehaviour {
     public int SearchHeuristic { get; set; }
     public HexCell NextWithSamePriority { get; set; }
     public int SearchPhase { get; set; }
+    public HexUnit Unit { get; set; }
 
     public HexCoordinates coordinates;
     public RectTransform uiRect;
@@ -78,6 +79,14 @@ public class HexCell : MonoBehaviour {
         Image highlight = uiRect.GetChild(0).GetComponent<Image>();
         highlight.color = color;
         highlight.enabled = true;
+    }
+
+    public Vector3 Position
+    {
+        get
+        {
+            return transform.localPosition;
+        }
     }
 
     public int TerrainTypeIndex

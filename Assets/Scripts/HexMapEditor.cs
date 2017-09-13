@@ -5,29 +5,54 @@ using System.IO;
 public class HexMapEditor : MonoBehaviour {
 
     public HexGrid hexGrid;
+    public HexUnit unitPrefab;
     HexCell searchFromCell, searchToCell;
     bool editMode;
 
     int activeTerrainTypeIndex;
 
     void Update () {
-		if (
-			Input.GetMouseButton(0) &&
-			!EventSystem.current.IsPointerOverGameObject()
-		) {
-			HandleInput();
-		}
-	}
+		//if (
+		//	Input.GetMouseButton(0) &&
+		//	!EventSystem.current.IsPointerOverGameObject()
+		//) {
+		//	HandleInput();
+		//}
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            if (Input.GetMouseButton(0))
+            {
+                HandleInput();
+                return;
+            }
+            if (Input.GetKeyDown(KeyCode.U))
+            {
+                if (Input.GetKey(KeyCode.LeftShift))
+                {
+                    DestroyUnit();
+                }
+                else
+                {
+                    CreateUnit();
+                }
+                return;
+            }
+        }
+    }
 
 	void HandleInput () {
-		Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-		RaycastHit hit;
-		if (Physics.Raycast(inputRay, out hit)) {
+        //Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //RaycastHit hit;
+        //if (Physics.Raycast(inputRay, out hit)) {
+        HexCell currentCell = GetCellUnderCursor();
+        if (currentCell)
+        {
             if (editMode)
             {
-                EditCell(hexGrid.GetCell(hit.point));
+                //EditCell(hexGrid.GetCell(hit.point));
+                EditCell(currentCell);
             }
-            HexCell currentCell = hexGrid.GetCell(hit.point);
+        //    HexCell currentCell = hexGrid.GetCell(hit.point);
             if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
             {
                 if (searchFromCell != currentCell)
@@ -55,6 +80,17 @@ public class HexMapEditor : MonoBehaviour {
         }
     }
 
+    HexCell GetCellUnderCursor()
+    {
+        Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(inputRay, out hit))
+        {
+            return hexGrid.GetCell(hit.point);
+        }
+        return null;
+    }
+
     void EditCell(HexCell cell)
     {
         if (cell)
@@ -65,6 +101,26 @@ public class HexMapEditor : MonoBehaviour {
             }
         }
 
+    }
+
+    void CreateUnit()
+    {
+        HexCell cell = GetCellUnderCursor();
+        if (cell && !cell.Unit)
+        {
+            HexUnit unit = Instantiate(unitPrefab);
+            unit.transform.SetParent(hexGrid.transform, false);
+            unit.Location = cell;
+        }
+    }
+
+    void DestroyUnit()
+    {
+        HexCell cell = GetCellUnderCursor();
+        if (cell && cell.Unit)
+        {
+            cell.Unit.Die();
+        }
     }
 
     public void SetEditMode(bool toggle)
