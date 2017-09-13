@@ -26,21 +26,27 @@ public class HexMapEditor : MonoBehaviour {
             HexCell currentCell = hexGrid.GetCell(hit.point);
             if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
             {
-                if (searchFromCell)
+                if (searchFromCell != currentCell)
                 {
-                    searchFromCell.DisableHighlight();
-                }
-                searchFromCell = currentCell;
-                searchFromCell.EnableHighlight(Color.blue);
-                if (searchToCell)
-                {
-                    hexGrid.FindPath(searchFromCell, searchToCell, 24);
+                    if (searchFromCell)
+                    {
+                        searchFromCell.DisableHighlight();
+                    }
+                    searchFromCell = currentCell;
+                    searchFromCell.EnableHighlight(Color.blue);
+                    if (searchToCell)
+                    {
+                        hexGrid.FindPath(searchFromCell, searchToCell, 24);
+                    }
                 }
             }
             if (searchFromCell && searchFromCell != currentCell)
             {
-                searchToCell = currentCell;
-                hexGrid.FindPath(searchFromCell, searchToCell, 24);
+                if (searchToCell != currentCell)
+                {
+                    searchToCell = currentCell;
+                    hexGrid.FindPath(searchFromCell, searchToCell, 24);
+                }
             }
         }
     }
