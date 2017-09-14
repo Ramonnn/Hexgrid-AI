@@ -5,7 +5,6 @@ using System.IO;
 public class HexMapEditor : MonoBehaviour {
 
     public HexGrid hexGrid;
-    public HexUnit unitPrefab;
     HexCell searchFromCell, searchToCell;
     bool editMode;
 
@@ -108,9 +107,10 @@ public class HexMapEditor : MonoBehaviour {
         HexCell cell = GetCellUnderCursor();
         if (cell && !cell.Unit)
         {
-            HexUnit unit = Instantiate(unitPrefab);
-            unit.transform.SetParent(hexGrid.transform, false);
-            unit.Location = cell;
+            //HexUnit unit = Instantiate(unitPrefab);
+            //unit.transform.SetParent(hexGrid.transform, false);
+            //unit.Location = cell;
+            hexGrid.AddUnit(Instantiate(HexUnit.unitPrefab), cell);
         }
     }
 
@@ -119,7 +119,7 @@ public class HexMapEditor : MonoBehaviour {
         HexCell cell = GetCellUnderCursor();
         if (cell && cell.Unit)
         {
-            cell.Unit.Die();
+            hexGrid.RemoveUnit(cell.Unit);
         }
     }
 
@@ -137,32 +137,5 @@ public class HexMapEditor : MonoBehaviour {
     public void SetTerrainTypeIndex(int index)
     {
         activeTerrainTypeIndex = index;
-    }
-
-    public void Save()
-    {
-        string path = Path.Combine(Application.persistentDataPath, "test.map");
-        using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create)))
-        {
-            writer.Write(0);
-            hexGrid.Save(writer);
-        }     
-    }
-
-    public void Load()
-    {
-        string path = Path.Combine(Application.persistentDataPath, "test.map");
-        using (BinaryReader reader = new BinaryReader(File.OpenRead(path)))
-        {
-            int header = reader.ReadInt32();
-            if (header == 0)
-            {
-                hexGrid.Load(reader);
-            }
-            else
-            {
-                Debug.LogWarning("Unknown map format " + header);
-            }
-        }
     }
 }
