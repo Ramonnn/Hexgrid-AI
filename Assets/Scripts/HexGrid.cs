@@ -44,6 +44,9 @@ public class HexGrid : MonoBehaviour {
             return false;
         }
 
+        ClearPath();
+        ClearUnits();
+
         if (chunks != null)
         {
             for (int i = 0; i < chunks.Length; i++)
@@ -317,11 +320,14 @@ public class HexGrid : MonoBehaviour {
     {
         writer.Write(cellCountX);
         writer.Write(cellCountZ);
+
         for (int i = 0; i < cells.Length; i++)
         {
             cells[i].Save(writer);
         }
+
         writer.Write(units.Count);
+
         for (int i = 0; i < units.Count; i++)
         {
             units[i].Save(writer);
@@ -333,7 +339,7 @@ public class HexGrid : MonoBehaviour {
         ClearPath();
         ClearUnits();
         int x = 20, z = 15;
-        if (header >= 1)
+        if (header >= 2)
         {
             x = reader.ReadInt32();
             z = reader.ReadInt32();

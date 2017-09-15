@@ -6,6 +6,7 @@ using System.IO;
 public class HexUnit : MonoBehaviour {
 
     public static HexUnit unitPrefab;
+
     public HexCell Location
     {
         get
@@ -36,7 +37,6 @@ public class HexUnit : MonoBehaviour {
     public static void Load(BinaryReader reader, HexGrid grid)
     {
         HexCoordinates coordinates = HexCoordinates.Load(reader);
-        float orientation = reader.ReadSingle();
         grid.AddUnit(Instantiate(unitPrefab), grid.GetCell(coordinates));
     }
 }
