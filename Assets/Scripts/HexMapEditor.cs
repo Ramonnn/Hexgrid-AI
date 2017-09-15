@@ -5,18 +5,17 @@ using System.IO;
 public class HexMapEditor : MonoBehaviour {
 
     public HexGrid hexGrid;
-    HexCell searchFromCell, searchToCell;
-    bool editMode;
+    //HexCell searchFromCell, searchToCell;
+    //bool editMode;
 
     int activeTerrainTypeIndex;
 
+    void Awake()
+    {
+        SetEditMode(false);
+    }
+
     void Update () {
-		//if (
-		//	Input.GetMouseButton(0) &&
-		//	!EventSystem.current.IsPointerOverGameObject()
-		//) {
-		//	HandleInput();
-		//}
         if (!EventSystem.current.IsPointerOverGameObject())
         {
             if (Input.GetMouseButton(0))
@@ -40,54 +39,44 @@ public class HexMapEditor : MonoBehaviour {
     }
 
 	void HandleInput () {
-        //Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-        //RaycastHit hit;
-        //if (Physics.Raycast(inputRay, out hit)) {
         HexCell currentCell = GetCellUnderCursor();
         if (currentCell)
         {
-            if (editMode)
-            {
-                //EditCell(hexGrid.GetCell(hit.point));
+            //if (editMode)
+            //{
                 EditCell(currentCell);
-            }
-        //    HexCell currentCell = hexGrid.GetCell(hit.point);
-            if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
-            {
-                if (searchFromCell != currentCell)
-                {
-                    if (searchFromCell)
-                    {
-                        searchFromCell.DisableHighlight();
-                    }
-                    searchFromCell = currentCell;
-                    searchFromCell.EnableHighlight(Color.blue);
-                    if (searchToCell)
-                    {
-                        hexGrid.FindPath(searchFromCell, searchToCell, 24);
-                    }
-                }
-            }
-            if (searchFromCell && searchFromCell != currentCell)
-            {
-                if (searchToCell != currentCell)
-                {
-                    searchToCell = currentCell;
-                    hexGrid.FindPath(searchFromCell, searchToCell, 24);
-                }
-            }
+            //}
+            //if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
+            //{
+            //   if (searchFromCell != currentCell)
+            //    {
+            //        if (searchFromCell)
+            //        {
+            //            searchFromCell.DisableHighlight();
+            //        }
+            //        searchFromCell = currentCell;
+            //        searchFromCell.EnableHighlight(Color.blue);
+            //        if (searchToCell)
+            //        {
+            //            hexGrid.FindPath(searchFromCell, searchToCell, 24);
+            //        }
+            //    }
+            //}
+            //if (searchFromCell && searchFromCell != currentCell)
+            //{
+            //    if (searchToCell != currentCell)
+            //    {
+            //        searchToCell = currentCell;
+            //        hexGrid.FindPath(searchFromCell, searchToCell, 24);
+            //    }
+            //}
         }
     }
 
     HexCell GetCellUnderCursor()
     {
-        Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(inputRay, out hit))
-        {
-            return hexGrid.GetCell(hit.point);
-        }
-        return null;
+        return
+            hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
     }
 
     void EditCell(HexCell cell)
@@ -107,9 +96,6 @@ public class HexMapEditor : MonoBehaviour {
         HexCell cell = GetCellUnderCursor();
         if (cell && !cell.Unit)
         {
-            //HexUnit unit = Instantiate(unitPrefab);
-            //unit.transform.SetParent(hexGrid.transform, false);
-            //unit.Location = cell;
             hexGrid.AddUnit(Instantiate(HexUnit.unitPrefab), cell);
         }
     }
@@ -125,8 +111,9 @@ public class HexMapEditor : MonoBehaviour {
 
     public void SetEditMode(bool toggle)
     {
-        editMode = toggle;
-        hexGrid.ShowUI(!toggle);
+        //editMode = toggle;
+        //hexGrid.ShowUI(!toggle);
+        enabled = toggle;
     }
 
     public void ShowUI(bool visible)

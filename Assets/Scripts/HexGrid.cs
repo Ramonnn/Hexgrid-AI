@@ -141,7 +141,6 @@ public class HexGrid : MonoBehaviour {
 
 		Text label = Instantiate<Text>(cellLabelPrefab);
 		label.rectTransform.anchoredPosition = new Vector2(position.x, position.z);
-		//label.text = cell.coordinates.ToStringOnSeparateLines();
         cell.uiRect = label.rectTransform;
 
         AddCellToChunk(x, z, cell);
@@ -156,6 +155,16 @@ public class HexGrid : MonoBehaviour {
         int localX = x - chunkX * HexMetrics.chunkSizeX;
         int localZ = z - chunkZ * HexMetrics.chunkSizeZ;
         chunk.AddCell(localX + localZ * HexMetrics.chunkSizeX, cell);
+    }
+
+    public HexCell GetCell(Ray ray)
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            return GetCell(hit.point);
+        }
+        return null;
     }
 
     public void ShowUI(bool visible)
@@ -175,6 +184,14 @@ public class HexGrid : MonoBehaviour {
         ShowPath(speed);
     }
 
+    public bool HasPath
+    {
+        get
+        {
+            return currentPathExists;
+        }
+    }
+
     void ShowPath(int speed)
     {
         if (currentPathExists)
@@ -192,7 +209,7 @@ public class HexGrid : MonoBehaviour {
         currentPathTo.EnableHighlight(Color.red);
     }
 
-    void ClearPath()
+    public void ClearPath()
     {
         if (currentPathExists)
         {
@@ -242,13 +259,7 @@ public class HexGrid : MonoBehaviour {
         {
             searchFrontier.Clear();
         }
-        //for (int i = 0; i < cells.Length; i++)
-        //{
-            //cells[i].Distance = int.MaxValue;
-        //    cells[i].SetLabel(null);
-        //    cells[i].DisableHighlight();
-        //}
-        //fromCell.EnableHighlight(Color.blue);
+
         fromCell.SearchPhase = searchFrontierPhase;
         fromCell.Distance = 0;
         searchFrontier.Enqueue(fromCell);
@@ -260,15 +271,6 @@ public class HexGrid : MonoBehaviour {
             if (current == toCell)
             {
                 return true;
-                //while (current != fromCell)
-                //{
-                //    int turn = current.Distance / speed;
-                //    current.SetLabel(turn.ToString());
-                //    current.EnableHighlight(Color.white);
-                //    current = current.PathFrom;
-                //}
-                //toCell.EnableHighlight(Color.red);
-                //break;
             }
 
             int currentTurn = current.Distance / speed;
@@ -277,6 +279,10 @@ public class HexGrid : MonoBehaviour {
             {
                 HexCell neighbor = current.GetNeighbor(d);
                 if (neighbor == null || neighbor.SearchPhase > searchFrontierPhase) // ANY TERRAIN MOVEMENT PENALTIES CAN BE ADDED HERE
+                {
+                    continue;
+                }
+                if (neighbor.Unit) // NOT MOVING THROUGH OTHER UNITS, SO SEARCH AROUND HEXES WITH OTHER UNITS
                 {
                     continue;
                 }

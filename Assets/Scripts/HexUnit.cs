@@ -15,6 +15,10 @@ public class HexUnit : MonoBehaviour {
         }
         set
         {
+            if (location)
+            {
+                location.Unit = null;
+            }
             location = value;
             value.Unit = this;
             transform.localPosition = value.Position;
@@ -38,5 +42,10 @@ public class HexUnit : MonoBehaviour {
     {
         HexCoordinates coordinates = HexCoordinates.Load(reader);
         grid.AddUnit(Instantiate(unitPrefab), grid.GetCell(coordinates));
+    }
+
+    public bool IsValidDestination(HexCell cell)
+    {
+        return !cell.Unit;
     }
 }
